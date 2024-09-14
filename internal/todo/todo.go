@@ -61,12 +61,26 @@ func (l *List) Remove(id int) error {
 
 // Done marks a task as done.
 func (l *List) Done(id int) error {
-	panic("not implemented")
+	for i, t := range l.tasks {
+		if t.ID == id {
+			l.tasks[i].Done = true
+			l.tasks[i].CompletedAt = time.Now()
+			return nil
+		}
+	}
+	return NotFoundError{ID: id}
 }
 
 // Undo marks a task as undone.
 func (l *List) Undo(id int) error {
-	panic("not implemented")
+	for i, t := range l.tasks {
+		if t.ID == id {
+			l.tasks[i].Done = false
+			l.tasks[i].CompletedAt = time.Time{}
+			return nil
+		}
+	}
+	return NotFoundError{ID: id}
 }
 
 // Save saves the list to the store.

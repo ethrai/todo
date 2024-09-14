@@ -62,3 +62,32 @@ func TestRemove(t *testing.T) {
 		t.Errorf("expected 0 tasks, got %d", len(l.tasks))
 	}
 }
+
+func TestDoneUndo(t *testing.T) {
+	task1 := "Foo"
+	task2 := "Bar"
+	l := New("test.json")
+	l.Add(task1)
+	l.Add(task2)
+
+	if len(l.tasks) != 2 {
+		t.Errorf("expected 2 tasks, got %d", len(l.tasks))
+	}
+
+	// Act
+	if err := l.Done(1); err != nil {
+		t.Errorf("expected no error, got %s", err)
+	}
+
+	if l.tasks[0].Done != true {
+		t.Errorf("expected task[0].Done to be true, got %t", l.tasks[0].Done)
+	}
+
+	if err := l.Undo(1); err != nil {
+		t.Errorf("expected no error, got %s", err)
+	}
+
+	if l.tasks[0].Done != false {
+		t.Errorf("expected task[0].Done to be false, got %t", l.tasks[0].Done)
+	}
+}

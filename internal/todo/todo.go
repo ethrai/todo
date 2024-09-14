@@ -1,8 +1,17 @@
 package todo
 
 import (
+	"fmt"
 	"time"
 )
+
+type NotFoundError struct {
+	ID int
+}
+
+func (e NotFoundError) Error() string {
+	return fmt.Sprintf("task %d not found", e.ID)
+}
 
 // task is a single todo item
 type task struct {

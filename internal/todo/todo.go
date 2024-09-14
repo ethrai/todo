@@ -1,8 +1,6 @@
 package todo
 
 import (
-	"io"
-	"os"
 	"time"
 )
 
@@ -18,17 +16,27 @@ type task struct {
 
 // List is a todo list.
 type List struct {
-	store *os.File
+	store string
 	tasks []task
 }
 
-func New(store io.ReadWriter) *List {
-	panic("not implemented")
+// New creates a new todo list. It will treat file at storePath as a json store.
+func New(storePath string) *List {
+	return &List{
+		store: storePath,
+	}
 }
 
 // Add adds a new task to the list.
-func (l *List) Add() {
-	panic("not implemented")
+func (l *List) Add(name string) {
+	l.tasks = append(l.tasks, task{
+		ID:          len(l.tasks) + 1,
+		Name:        name,
+		Desc:        "",
+		Done:        false,
+		CreatedAt:   time.Now(),
+		CompletedAt: time.Time{},
+	})
 }
 
 // Remove removes a task from the list.

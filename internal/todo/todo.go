@@ -50,7 +50,13 @@ func (l *List) Add(name string) {
 
 // Remove removes a task from the list.
 func (l *List) Remove(id int) error {
-	panic("not implemented")
+	for i, t := range l.tasks {
+		if t.ID == id {
+			l.tasks = append(l.tasks[:i], l.tasks[i+1:]...)
+			return nil
+		}
+	}
+	return NotFoundError{ID: id}
 }
 
 // Done marks a task as done.

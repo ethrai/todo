@@ -1,6 +1,9 @@
 package todo
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestAdd(t *testing.T) {
 	taskName := "Foo"
@@ -89,5 +92,40 @@ func TestDoneUndo(t *testing.T) {
 
 	if l.tasks[0].Done != false {
 		t.Errorf("expected task[0].Done to be false, got %t", l.tasks[0].Done)
+	}
+}
+
+func TestSaveLoad(t *testing.T) {
+	f, err := os.CreateTemp("", "test")
+	if err != nil {
+		t.Errorf("failed to create temp file: %s", err)
+	}
+	defer os.Remove(f.Name())
+
+	task1 := "Foo"
+	task2 := "Bar"
+	l := New(f.Name())
+	l.Add(task1)
+	l.Add(task2)
+
+	if err := l.Save(); err != nil {
+		t.Errorf("expected no error, got %s", err)
+	}
+
+	l2 := New(f.Name())
+	if err := l2.Load(); err != nil {
+		t.Errorf("expected no error, got %s", err)
+	}
+
+	if len(l2.tasks) != 2 {
+		t.Errorf("expected 2 tasks, got %d", len(l2.tasks))
+	}
+
+	if l2.tasks[0].Name != task1 {
+		t.Errorf("expected task[0].Name to be %s, got %s", task1, l2.tasks[0].Name)
+	}
+
+	if l2.tasks[1].Name != task2 {
+		t.Errorf("expected task[1].Name to be %s, got %s", task2, l2.tasks[1].Name)
 	}
 }

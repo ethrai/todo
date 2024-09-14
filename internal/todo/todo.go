@@ -1,7 +1,9 @@
 package todo
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -25,14 +27,14 @@ type task struct {
 
 // List is a todo list.
 type List struct {
-	store string
-	tasks []task
+	storePath string
+	tasks     []task
 }
 
 // New creates a new todo list. It will treat file at storePath as a json store.
 func New(storePath string) *List {
 	return &List{
-		store: storePath,
+		storePath: storePath,
 	}
 }
 
@@ -85,12 +87,32 @@ func (l *List) Undo(id int) error {
 
 // Save saves the list to the store.
 func (l *List) Save() error {
-	panic("not implemented")
+	f, err := os.OpenFile(l.storePath, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to open file: %s", err)
+	}
+	defer f.Close()
+
+	if err := json.NewEncoder(f).Encode(l.tasks); err != nil {
+		return fmt.Errorf("failed to encode tasks: %s", err)
+	}
+
+	return nil
 }
 
 // Load loads the list from the store.
 func (l *List) Load() error {
-	panic("not implemented")
+	f, err := os.OpenFile(l.storePath, os.O_RDONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to open file: %s", err)
+	}
+	defer f.Close()
+
+	if err := json.NewDecoder(f).Decode(&l.tasks); err != nil {
+		return fmt.Errorf("failed to decode tasks: %s", err)
+	}
+
+	return nil
 }
 
 // String returns all tasks as a string in formatted manner.

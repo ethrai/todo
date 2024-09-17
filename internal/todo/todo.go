@@ -37,8 +37,10 @@ type List struct {
 
 // New creates a new todo list. It will treat file at storePath as a json store.
 func New(storePath string) *List {
+// New creates a new todo list. It will treat file at storeFile as a json store.
+func New(storeFile string) *List {
 	return &List{
-		storePath: storePath,
+		storePath: storeFile,
 	}
 }
 

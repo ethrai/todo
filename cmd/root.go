@@ -10,7 +10,11 @@ import (
 	"github.com/ethrai/todo/internal/todo"
 )
 
-var list *todo.List
+var (
+	cfgFile   string
+	storeFile string
+	list      *todo.List
+)
 
 var rootCmd = &cobra.Command{
 	Use:   "todo",
@@ -42,24 +46,23 @@ func Execute() {
 	}
 }
 
-// TODO: init is kinda messy here, probably should move list initialization
-// somewhere else!
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cobra.OnInitialize(initStore)
+	rootCmd.PersistentFlags().
+		StringVarP(&storeFile, "file", "f", "", "store file (default is $HOME/.tododata.json)")
+}
 
-	userHome, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+func initStore() {
+	if storeFile == "" {
+		userHome, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		storeFile = path.Join(userHome, ".tododata.json")
 	}
 
-	defaultStorePath := path.Join(userHome, ".tododata.json")
-
-	storePath := rootCmd.Flags().
-		StringP("file", "f", defaultStorePath,
-			"Filepath where tasks will be stored")
-
-	list = todo.New(*storePath)
+	list = todo.New(storeFile)
 	if err := list.Load(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

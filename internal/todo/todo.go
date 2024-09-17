@@ -114,7 +114,7 @@ func (l *List) Load() error {
 	}
 	defer f.Close()
 
-	if err := json.NewDecoder(f).Decode(&l.tasks); err != nil {
+	if err := json.NewDecoder(f).Decode(&l.tasks); err != nil && !errors.Is(err, io.EOF) {
 		return fmt.Errorf("failed to decode tasks: %s", err)
 	}
 

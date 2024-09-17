@@ -2,15 +2,19 @@ package todo
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"time"
 )
 
+// NotFoundError tells that task with ID is not present in the list.
 type NotFoundError struct {
 	ID int
 }
 
+// Error is impl of error interface
 func (e NotFoundError) Error() string {
 	return fmt.Sprintf("task %d not found", e.ID)
 }

@@ -19,8 +19,8 @@ func (e NotFoundError) Error() string {
 	return fmt.Sprintf("task %d not found", e.ID)
 }
 
-// task is a single todo item
-type task struct {
+// Task is a single todo item
+type Task struct {
 	ID          int       `json:"id"`
 	Name        string    `json:"name"`
 	Desc        string    `json:"desc"`
@@ -32,7 +32,7 @@ type task struct {
 // List is a todo list.
 type List struct {
 	storePath string
-	tasks     []task
+	tasks     []Task
 }
 
 // New creates a new todo list. It will treat file at storePath as a json store.
@@ -44,7 +44,7 @@ func New(storePath string) *List {
 
 // Add adds a new task to the list.
 func (l *List) Add(name string) {
-	l.tasks = append(l.tasks, task{
+	l.tasks = append(l.tasks, Task{
 		ID:          len(l.tasks) + 1,
 		Name:        name,
 		Desc:        "",

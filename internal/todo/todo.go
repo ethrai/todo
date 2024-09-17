@@ -35,8 +35,6 @@ type List struct {
 	tasks     []Task
 }
 
-// New creates a new todo list. It will treat file at storePath as a json store.
-func New(storePath string) *List {
 // New creates a new todo list. It will treat file at storeFile as a json store.
 func New(storeFile string) *List {
 	return &List{
@@ -119,6 +117,10 @@ func (l *List) Load() error {
 	}
 
 	return nil
+}
+
+func (l *List) Last() Task {
+	return l.tasks[len(l.tasks)-1]
 }
 
 // String returns all tasks as a string in formatted manner.
